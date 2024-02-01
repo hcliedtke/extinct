@@ -13,10 +13,13 @@ require(stats)# function for calculating mid-range values ----------------------
 pxt.recording=function(pci,pxt){pci+(1-pci)*pxt}
 pxt.survey=function(eps, pi, pr, pxt){(1-eps*pi*pr)*pxt}
 
-px.mid = function()
+px.mid = function(recordings,surveys)
 {
   
-  
+  # create range of years
+  min_year=min(c(recordings$year, surveys$year))
+  max_year=max(c(recordings$year, surveys$year))
+  years=min_year:max_year
   
   PXt = NULL
   PXt.min = NULL

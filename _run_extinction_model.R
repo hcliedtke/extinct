@@ -1,14 +1,14 @@
 
 
 # set species working directory
-setwd("~/Dropbox/John PhD documents/IUCN/extinction/c_maridadi/")
+setwd("~/Documents/git_projects/extinct/")
 
 # load functions
-source("../_functions_thompson_et_al.R")
+source("./_functions_thompson_et_al.R")
 
 # load data files for recordings and surveys
-recordings <- read.csv("recordings.csv")
-surveys <- read.csv("surveys.csv")
+recordings <- read.csv("./c_maridadi/recordings.csv")
+surveys <- read.csv("./c_maridadi/surveys.csv")
 
 # data for passive surveys
 #data for passive surveys
@@ -34,12 +34,14 @@ pas.surveys = cbind(pas.sur.years,t(replicate(length(pas.sur.years), pas.sur)))
 colnames(pas.surveys) = names(surveys)
 surveys = rbind(surveys,pas.surveys)
 
-rec.year = cbind(recordings[,'year'],1) #whether a recording was made this year
+rec.year = cbind(recordings[,'year'],1) # whether a recording was made this year
 rec.year = rbind(rec.year,cbind(surveys[,'year'],0))
 rec.year = rec.year[order(rec.year[,1]),]
 
 
-PXt= px.mid() ### NOTE: FIRST SURVEY YEAR NEEDS TO OCCUR AFTER THE FIRST RECORD!!!
+
+## run model
+PXt= px.mid(recordings=recordings) ### NOTE: FIRST SURVEY YEAR NEEDS TO OCCUR AFTER THE FIRST RECORD!!!
 
 
 # Plot the results -----------------------------
@@ -68,4 +70,9 @@ axis(1, at = c(min(years), max(years)), las = 2)
 # PXt = cbind(years,PXt.min,PXt.mid,PXt.max)
 PXt = cbind(years,PXt)
 print (PXt)
+
+
+## ggplot
+
+
 
