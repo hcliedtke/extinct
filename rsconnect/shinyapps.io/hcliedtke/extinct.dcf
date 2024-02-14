@@ -1,0 +1,12 @@
+name: extinct
+title: extinct
+username: hcliedtke
+account: hcliedtke
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 11225719
+bundleId: 8255555
+url: https://hcliedtke.shinyapps.io/extinct/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
