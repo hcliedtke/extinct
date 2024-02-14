@@ -13,15 +13,17 @@ require(stats)# function for calculating mid-range values ----------------------
 pxt.recording=function(pci,pxt){pci+(1-pci)*pxt}
 pxt.survey=function(eps, pi, pr, pxt){(1-eps*pi*pr)*pxt}
 
-px.mid = function(recordings=recordings, surveys = all_surveys, all_years=record_years)
+## n = number of samples/iterations
+## recordings = data frame with column of year, pci_lower, pci_upper
+## survey = data frame with columns year eps_lower eps_upper pi_lower pi_upper pr_lower pr_upper
+
+px.mid = function(recordings,surveys, record_years,  n=10000)
 {
   
-  ### convert input to matrix
-  recordings=as.data.frame(recordings)
-  surveys=as.data.frame(surveys)
-  years=all_years$year
-
-  
+  # create range of years
+  min_year=min(c(recordings$year, surveys$year))
+  max_year=max(c(recordings$year, surveys$year))
+  years=min_year:max_year
   
   PXt = NULL
   PXt.min = NULL
@@ -40,10 +42,10 @@ px.mid = function(recordings=recordings, surveys = all_surveys, all_years=record
   PXt.max[1]=pxt.recording(pci.max, PX0)
   
   
-  n=10000 #number of samples
   pxt.sam=rep(PX0,n)
   stdev=(rec[,3] - rec[,2])/4
-  pci.sam = rnorm(n,pci.mid,stdev )
+  
+  pci.sam = rnorm(n,mean=as.numeric(pci.mid),sd=as.numeric(stdev))
   pxt.sam = pxt.recording(pci.sam, pxt.sam)
   
   sd[1]=sd(pxt.sam)
@@ -52,7 +54,7 @@ px.mid = function(recordings=recordings, surveys = all_surveys, all_years=record
   for (t in 2:length(years)) {
     
     #calculating rj
-    if (record_years$record[t]==1) #if recording
+    if (record_years[t,2]==1) #if recording
     {
       
       rec = recordings[recordings[,1]==years[t],]
