@@ -13,17 +13,15 @@ require(stats)# function for calculating mid-range values ----------------------
 pxt.recording=function(pci,pxt){pci+(1-pci)*pxt}
 pxt.survey=function(eps, pi, pr, pxt){(1-eps*pi*pr)*pxt}
 
-## n = number of samples/iterations
-## recordings = data frame with column of year, pci_lower, pci_upper
-## survey = data frame with columns year eps_lower eps_upper pi_lower pi_upper pr_lower pr_upper
-
-px.mid = function(recordings,surveys, record_years,  n=10000)
+px.mid = function(records=records, surveys = all_surveys, all_years=record_years)
 {
   
-  # create range of years
-  min_year=min(c(recordings$year, surveys$year))
-  max_year=max(c(recordings$year, surveys$year))
-  years=min_year:max_year
+  ### convert input to matrix
+  records=as.data.frame(records)
+  surveys=as.data.frame(surveys)
+  years=all_years$year
+
+  
   
   PXt = NULL
   PXt.min = NULL
@@ -32,7 +30,7 @@ px.mid = function(recordings,surveys, record_years,  n=10000)
   PX0 = 1 # species is extant at year 0 P(X0)=1
   
   # first year t=1
-  rec = recordings[recordings[,1]==years[1],]
+  rec = records[records[,1]==years[1],]
   pci.mid = (rec[,2] + rec[,3]) / 2
   pci.min=rec[,2]
   pci.max=rec[,3]
@@ -42,10 +40,10 @@ px.mid = function(recordings,surveys, record_years,  n=10000)
   PXt.max[1]=pxt.recording(pci.max, PX0)
   
   
+  n=10000 #number of samples
   pxt.sam=rep(PX0,n)
   stdev=(rec[,3] - rec[,2])/4
-  
-  pci.sam = rnorm(n,mean=as.numeric(pci.mid),sd=as.numeric(stdev))
+  pci.sam = rnorm(n,pci.mid,stdev )
   pxt.sam = pxt.recording(pci.sam, pxt.sam)
   
   sd[1]=sd(pxt.sam)
@@ -54,10 +52,10 @@ px.mid = function(recordings,surveys, record_years,  n=10000)
   for (t in 2:length(years)) {
     
     #calculating rj
-    if (record_years[t,2]==1) #if recording
+    if (all_years$record[t]==1) #if recording
     {
       
-      rec = recordings[recordings[,1]==years[t],]
+      rec = records[records[,1]==years[t],]
       
       #get mid point estimate
       pci.mid = (rec[,2] + rec[,3]) / 2

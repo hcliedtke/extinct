@@ -1,0 +1,176 @@
+/*##################### header*/
+
+.header {
+	height: 50px;
+  	position: fixed;
+	display: block;
+  	top: 0;
+	left: 0;
+	right:0;
+	text-align: left;
+	background: white;
+	font-size: 20px;
+	z-index: 30;
+}
+
+.header img {
+	position: absolute;
+	float: right;
+	height: 45px;
+	z-index: 50;
+	top:0;
+	right:0;
+	margin-right:50px;
+	margin-top: 5px;
+}
+
+.header h1 {
+	font-size: 16px;
+	margin-left: 100px;
+	margin-top:20px;
+	margin-bottom:1px;
+}
+
+.header h2 {
+	font-size: 14px;
+	margin-left: 100px;
+	margin-top:1px;
+	margin-bottom:1px;
+}
+
+.header h3 {
+	font-size: 14px;
+	margin-left: 100px;
+	margin-top:1px;
+	margin-bottom:1px;
+}
+.header p {
+	font-size: 14px;
+	margin-left: 100px;
+	margin-top:1px;
+	margin-bottom:1px;
+	color: #FFFFFF;
+}
+
+/*##################### navbar*/
+.navbar {
+	margin: 0;
+	padding-top: 50px;
+	height: 100%;
+	display: block;
+	position: fixed;
+	background-color: #313a46;
+	color: #7b899a; 
+	width: 200px; /* Modify the width of the sidebar */
+	box-shadow: 10px 0 20px -5px #888;
+  }
+
+.navbar-inverse .navbar-nav > li > a:hover, .navbar-inverse .navbar-nav > li > a:focus {
+	color: #8391a2;
+	background-color: #313a46;
+	border-right: 5px solid #ffffff;
+  }
+
+  .navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {
+	color: #ffffff;
+	background-color: #313a46;
+	border-right: 5px solid #ffffff;
+}
+
+.navbar li a {
+	display: block;
+	width: 180px;
+	background-color: #313a46;
+	color: #8391a2;
+	text-align: left;
+	text-decoration: none;
+	font-size: 14px;
+}
+
+
+.navbar li a:hover {
+	display: block;
+	background-color: #313a46;
+	color: #ffffff;
+	text-align: left;
+	text-decoration: none;
+	border-right: 5px solid #ffffff;
+}
+
+.navbar li a:focus {
+	display: block;
+	background-color: #313a46;
+	color: #ffffff;
+	text-align: left;
+	text-decoration: none;
+	border-right: 5px solid #ffffff;
+}
+
+.navbar li a:active {
+	display: block;
+	background-color: #313a46;
+	color: #ffffff;
+	text-align: left;
+	text-decoration: none;
+	border-right: 5px solid #ffffff;
+}
+
+/*##################### body*/
+
+body {
+	margin-left: 210px; /* Add a left margin to avoid content overlay */
+	padding-top: 60px !important;
+}
+
+/*##################### chart areas */
+
+.value-box {
+  background-color: #FFFFFF25 !important;
+}
+
+.chart-title {
+	border-bottom: 0px solid #d7d7d7;
+	background: white;
+	color: #313a46;
+	font-size: 17px;
+	font-weight: 500;
+	padding: 7px 10px 4px;
+	border-radius: 10px 10px 0px 0px;
+	border-bottom: solid #E5E4E2;
+  }
+
+.chart-wrapper {
+  border-radius: 10px 10px 10px 10px;
+}
+
+.rt-table {
+  font-size: 1.25rem;
+}
+
+.rt-table a {
+  color: #66c2a5;
+}
+
+.rt-table a:hover {
+  color: #9bf5c1;
+}
+
+
+/*##################### text/code output */
+
+pre {
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    border-left: 3px solid #f36d33;
+    color: #666;
+    page-break-inside: avoid;
+    font-family: monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    margin-bottom: 1.6em;
+    max-width: 100%;
+    overflow: auto;
+    padding: 1em 1.5em;
+    display: block;
+    word-wrap: break-word;
+}

@@ -1,11 +1,4 @@
 
-# set species working directory
-setwd("~/Documents/extinct/")
-library(tidyverse)
-
-# load functions
-source("./_functions_thompson_et_al.R")
-
 # load data files for recordings and surveys
 recordings <- read_csv("./c_maridadi/recordings.csv")
 surveys <- read_csv("./c_maridadi/surveys.csv")
