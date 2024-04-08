@@ -19,11 +19,11 @@ ui <- fluidPage(style='padding:100px;',
                                and a table of years in which surveys have been conducted, but the target species was not detected. Each table
                                also requires lower and upper probability limites for the likelihoods that a species could be directly identified,
                                surveys were conducted in an exhaustive manner, and how easily detectable the species is. More information on how
-                               these tables should be structured can be found in the original publication and in the example dataset",
+                               these tables should be structured can be found in the original publication and in the README file",
                                tags$a(
                                  "here.",
                                  target = "_blank",
-                                 href = "https://github.com/hcliedtke/extinct/c_maridadi")))
+                                 href = "https://github.com/hcliedtke/extinct")))
                          ),
                 
                 ## Input
