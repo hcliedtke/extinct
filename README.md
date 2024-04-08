@@ -8,14 +8,14 @@ Launch the app here: https://hcliedtke.shinyapps.io/extinct/
 
 ## Background
 
-[Thompson et al. 2013](https://www.sciencedirect.com/science/article/pii/S0006320717300575#s0080) published a method for estimating detection probabilities of a target species from survey data. It takes into account successful sightings (records) as well as search efforts that did not result in sightings (surveys), as well as the probabilities of surveys having been adequately conducted. The authors provide R code to execute their model and this Shiny app implements this code to produce a platform for estimating your own detection probabilities and for interactively adjusting survey adequacy probabilities to see how this affects detection probabilities.
+[Thompson et al. 2017](https://www.sciencedirect.com/science/article/pii/S0006320717300575#s0080) published a method for estimating detection probabilities of a target species from survey data. It takes into account successful sightings (records) as well as search efforts that did not result in sightings (surveys), as well as the probabilities of surveys having been adequately conducted. The authors provide R code to execute their model and this Shiny app implements this code to produce a platform for estimating your own detection probabilities and for interactively adjusting survey adequacy probabilities to see how this affects detection probabilities.
 
 
 ## Data input
 
 ## Records and Surveys
 
-For the correct implementation of this app, I refer you to [Thompson et al. 2013](https://www.sciencedirect.com/science/article/pii/S0006320717300575#s0080). In brief, this application requires two input tables as .csv files, that summarize the sightings and absence of sightings for years where the target species was actively looked for. 
+For the correct implementation of this app, I refer you to [Thompson et al. 2017](https://www.sciencedirect.com/science/article/pii/S0006320717300575#s0080). In brief, this application requires two input tables as .csv files, that summarize the sightings and absence of sightings for years where the target species was actively looked for. 
 
 1. Records data - a table with tree columns with the following headers: year, pci_lower, pci_upper
 2. Surveys data - a table with seven columns with the following headers: year, eps_lower, eps_upper, pi_lower, pi_upper, pr_lower, pr_upper
