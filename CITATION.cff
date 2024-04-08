@@ -1,0 +1,12 @@
+cff-version: 1.0.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Liedtke
+    given-names: H. Christoph
+    orcid: https://orcid.org/0000-0002-6221-8043
+title: "Extinct"
+version: 1.0.0
+identifiers:
+  - type: doi
+    value: 
+date-released: 2024-02-14

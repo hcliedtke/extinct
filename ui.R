@@ -32,8 +32,8 @@ ui <- fluidPage(style='padding:100px;',
                 fluidRow(style='padding:30px;margin:10px;background-color:#f7f6f2;border-radius:10px',
                          div(h3("Survey and Records Input"),
                              p("To get started, load your records and survey files, then hit Run!
-                               Hitting Run! without uploading files, will use demo data on Churamiti maridadi 
-                               from Liedtke et al. 2023")),
+                               Hitting Run! without uploading files, will use demo data on the Alaotra grebe
+                               with data from Thompson et al. 2013")),
 
                           ## Load demo data button
                          actionBttn("help_btn", "Get help with input format", syle = "pill", color="warning"),

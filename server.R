@@ -11,8 +11,9 @@ server <- function(input,output,session){
     shinyalert(title="Loading Data", type="info",
     text = "To get started, you must upload two data tables (as comma separated values [.csv] files) that provide information on the years with sightings of the targe species (records) and years in which surveys were conducted, but no animals were sighted (i.e. unsuccessful surveys). These two files must also contain upper and lower probability limits. The format of the tables is as follows:
     
-    1. Survey data - a table with seven columns with the following headers: year, eps_lower, eps_upper, pi_lower, pi_upper, pr_lower, pr_upper
-    2. Record data - a table with tree columns with the following headers: year, pci_lower, pci_upper
+    1. Record data - a table with tree columns with the following headers: year, pci_lower, pci_upper
+    2. Survey data - a table with seven columns with the following headers: year, eps_lower, eps_upper, pi_lower, pi_upper, pr_lower, pr_upper
+    
     
     The lower and upper bounds refer to:
     
@@ -23,7 +24,9 @@ server <- function(input,output,session){
     
     IMPORTANT!! The first year MUST be a record year. i.e. there cannot be unsuccessful surveys prior to the first record.
     
-    Check out the demo files or the original Thompson et al. 2013 publication for help, or for any problems, raise an issue in the github repository (link at bottom of page)"
+    Check out the demo files availaible form the github reporostory or the original Thompson et al. 2013 publication for help.
+    
+    For any problems, raise an issue in the github repository (link at bottom of page)"
     
     )
   })
@@ -70,14 +73,14 @@ server <- function(input,output,session){
     # if no input is provided, use demo data
     vals$surveys<-
       if(is.null(input$surveys_input)){
-        read_csv("./c_maridadi/surveys.csv")
+        read_csv("./t_rufolavatus/surveys.csv")
         } else {
           surveys()
           }
       
     vals$records<-
       if(is.null(input$records_input)){
-        read_csv("./c_maridadi/records.csv")
+        read_csv("./t_rufolavatus/records.csv")
         } else {
           records()
           }
