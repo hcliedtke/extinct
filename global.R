@@ -2,6 +2,7 @@
 library(shiny)
 library(shinydashboard)
 library(shinyWidgets)
+library(readxl)
 library(tidyverse)
 library(plotly)
 library(reactable)
@@ -37,7 +38,7 @@ run_colors <- c(
 source("functions/px_mid.R")
 
 # ============================================
-# load run_extinct function to execude code on button-click
+# load run_extinct function to execute code on button-click
 source("functions/run_extinct.R")
 
 
