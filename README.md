@@ -8,11 +8,11 @@ Launch the app here: https://hcliedtke.shinyapps.io/extinct/
 
 ## Background
 
+[Keith et al. 2017](https://doi.org/10.1016/j.biocon.2017.07.026) Discuss how to use an argument map to try and derive at probability estimates for threats that are impacting the extinction risk of species both at a local and spatial (distribution-wide) scale.
+
 [Thompson et al. 2017](https://www.sciencedirect.com/science/article/pii/S0006320717300575#s0080) published a method for estimating detection probabilities of a target species from survey data. It takes into account successful sightings (records) as well as search efforts that did not result in sightings (surveys), as well as the probabilities of surveys having been adequately conducted. The authors provide R code to execute their model and this Shiny app implements this code to produce a platform for estimating your own detection probabilities and for interactively adjusting survey adequacy probabilities to see how this affects detection probabilities.
 
-[Keith et al. 2017](https://doi.org/10.1016/j.biocon.2017.07.026) Discuss how to use an argument map to try and derive at probability estimates for threats that are impacting the extinction risk of species both at a local and distribution-wide scale.
-
-[Butchart et al. 2018](https://doi.org/10.1016/j.biocon.2018.08.014) Then combine these two extinction probabilities to help determine if a species should be classified as Critically Endangered or Extinct.
+[Akçakaya et al. 2017](https://doi.org/10.1016/j.biocon.2017.07.027) Then combine these two extinction probabilities to help determine if a species should be classified as Critically Endangered or Extinct, in line with the IUCN Red List species conservation status assessments.
 
 
 ## Data input
@@ -78,12 +78,13 @@ In addition to "active" survey years, this model assumes that during "passive" y
 
 The model was developed by:  
 
+Akçakaya, H. R., D. A. Keith, M. Burgman, S. H. M. Butchart, M. Hoffmann, H. M. Regan, I. Harrison, and E. Boakes. (2017). Inferring extinctions III: A cost-benefit framework for listing extinct species. Biological Conservation 214:336–342.
+
 Keith, D. A., Butchart, S. H. M.,  Regan, H. M.,  Harrison, I. H., Akçakaya, H. R., Solow, A. R.,  Burgman, M. A. (2017). Inferring extinctions I: A structured method using information on threats. Biological Conservation, 214. 320-327.
 
 Thompson, C. J., Koshkina, V., Burgman, M. A., Butchart, S. H., & Stone, L. (2017). Inferring extinctions II: a practical, iterative model based on records and surveys. Biological Conservation, 214, 328-335.
 
 Butchart, S. H. M., Lowe,  S., Martin, R. W., Symes, A., Westrip, J. R. S., Wheatley, H. (2017). Which bird species have gone extinct? A novel quantitative classification approach. Biological Conservation, 227, 9-18.
-
 
 Please cite their publication when using their models, including via this Shiny app. If this shiny app was useful to you, please cite this GitHub repository as well:
 

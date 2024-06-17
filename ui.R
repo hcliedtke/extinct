@@ -144,9 +144,9 @@ fluidRow(style='padding:30px;margin:10px;background-color:#f7f6f2;border-radius:
                 div(p( 
                   "This plot shows the extinction probabilities as estimated from the 'Surveys and Records' model of Thompson et al. and the 'Threats' model of Keith et al. Indicated are bounds for the IUCN Red List classifications for 'Critically Endangered' and 'Extinct' as defined by ",
                   tags$a(
-                    "Butchart et al. 2018",
+                    "Akçakaya et al. 2017",
                     target = "_blank",
-                    href = "https://doi.org/10.1016/j.biocon.2018.08.014"))
+                    href = "https://doi.org/10.1016/j.biocon.2017.07.027"))
                 ))
 ),
 

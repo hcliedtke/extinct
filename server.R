@@ -12,7 +12,7 @@ server <- function(input,output,session){
     text = "To get started, download the Extinction probability data template from the IUCN Red List website (see link in app). Fill this in for your species of interest. This provide information on the years with sightings of the targe species (records) and years in which surveys were conducted, but no animals were sighted (i.e. unsuccessful surveys). These two tables contain upper and lower probability limits for each. The format of the tables is as follows:
     
     1. Record data - a table with tree columns with the following headers: year, pci_lower, pci_upper
-    2. Survey data - a table with seven columns with the following headers: year, eps_lower, eps_upper, pi_lower, pi_upper, pr_lower, pr_upper
+    2. Survey data - a table with seven columns with the following headers: year, eps_lower, eps_upper, pi_lxower, pi_upper, pr_lower, pr_upper
     
     
     The lower and upper bounds refer to:
@@ -298,15 +298,20 @@ server <- function(input,output,session){
         
     # make plot
     
+    ## make colour gradient
+        grid_fill <- expand.grid(x=seq(0, 1, length.out = 100),
+                          y=seq(0, 1, length.out = 100))     # dataframe for all combinations
+        
     gg<-plot_dat %>%
       ggplot(aes(x=x,y=y)) +
-      geom_tile(data=df, aes(x, y, fill=x+y), alpha = 0.75) +
+      geom_tile(data=grid_fill, aes(x, y, fill=x+y), alpha = 0.75) +
       geom_rect(aes(xmin = 0.9, xmax = 1, ymin = 0.9, ymax = 1),color="red",fill = NA) +
       geom_rect(aes(xmin = 0.5, xmax = 1, ymin = 0.5, ymax = 1),color="red",fill = NA) +
       geom_text(aes(x=1, y=0.5, label = "Critically Endangered"), hjust = 1.1, vjust=-1,
                 color="red") +
       geom_text(aes(x=1, y=0.9, label = "Ex"), hjust = 1.2, vjust=-1,
                 color="red") +
+      geom_abline(aes(intercept=0, slope=1), linetype=2) +
       geom_point(size=3) + 
       geom_errorbar(aes(ymin = ymin,ymax = ymax),width = 0.01) + 
       geom_errorbarh(aes(xmin = xmin,xmax = xmax),height = 0.01) +
