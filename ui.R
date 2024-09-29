@@ -180,7 +180,7 @@ fluidRow(style='padding:30px;margin:10px;background-color:#f7f6f2;border-radius:
                 ## download
                 fluidRow(style='padding:30px;margin:10px;background-color:#f7f6f2;border-radius:10px',
                          div(h3("Export Results"),
-                             p("Downloading the resulting extant probability data and plot")),
+                             p("Downloading the resulting extant probability data and plots.")),
                       # column(width=4,
                       #        div(h4("Check error log")),
                       #        textOutput("error")
