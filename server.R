@@ -170,7 +170,7 @@ server <- function(input,output,session){
   })
   
   #=======================
-  # Run extinct code
+  # Defined reactive extinct code
 
   
   pxt <- reactive({
@@ -193,6 +193,53 @@ server <- function(input,output,session){
     
   })
   
+  #=======================
+  # Make input table (editable)
+  
+  output$records_tbl <- renderDT({
+    datatable(user_data()$records,
+              editable = TRUE,
+              filter = "none",
+              rownames= FALSE,
+              options = list(dom = 't',
+                             scrollX = TRUE,
+                             ordering=F))
+  })
+  
+  output$surveys_tbl <- renderDT({
+    datatable(user_data()$surveys,
+              editable = TRUE,
+              filter = "none",
+              rownames= FALSE,
+              options = list(dom = 't',
+                             scrollX = TRUE,
+                             ordering=F))
+  })
+  
+  #=======================
+  # Observe user input for records and survey tables
+  
+  # Observe changes to the DataTable and update the reactive data frame
+  observeEvent(input$records_tbl_cell_edit, {
+    info <- input$records_tbl_cell_edit
+    str(info)  # Print edited info (for debugging)
+    
+    # Update the reactive data frame with the new value
+    new_data <- user_data()
+    new_data$records[info$row, info$col+1] <- as.numeric(info$value)
+    user_data(new_data)
+  })
+  
+  # Observe changes to the DataTable and update the reactive data frame
+  observeEvent(input$surveys_tbl_cell_edit, {
+    info <- input$surveys_tbl_cell_edit
+    str(info)  # Print edited info (for debugging)
+    
+    # Update the reactive data frame with the new value
+    new_data <- user_data()
+    new_data$surveys[info$row, info$col+1] <- as.numeric(info$value)
+    user_data(new_data)
+  })
   
   
   #=======================
@@ -205,26 +252,34 @@ server <- function(input,output,session){
     
     # make plot
     
-    gg<-pxt() %>%
-      ggplot(aes(x=year)) +
+    gg<-pxt() %>% 
+      mutate(Observation=case_when(
+        year %in% (user_data()$surveys %>% pull(year)) ~ "No Sighting",
+        year %in% (user_data()$records %>% pull(year)) ~ "Confirmed Sighting"
+      )) %>%
+      ggplot(aes(x=year, y=PXt)) +
       geom_hline(aes(yintercept=0.5), linetype="dashed") +
       geom_hline(aes(yintercept=0.0), color="red") +
       geom_ribbon(aes(ymin=PXt.min, ymax=PXt.max), fill="grey70") +
       geom_ribbon(aes(ymin=MC_lower, ymax=MC_upper), fill="grey50") +
+      geom_line() +
+      geom_point(aes(color=Observation)) +  
+      scale_color_manual(values = c("Confirmed Sighting"="deepskyblue3","No Sighting"="black"), na.value = NA)  +
       scale_x_continuous(n.breaks=10) +
-      geom_line(aes(y=PXt)) +
       theme_classic() +
+      theme(legend.position="none") +
       ggtitle(user_data()$species)
     
     
-    gg
   })
   
       output$ext_ply<-renderPlotly({
-        plotly::ggplotly(gg_ext())
+        plotly::ggplotly(gg_ext()) 
+        #%>% layout(height = 500, width = 800)
       })
     
     
+      
       #=======================
       # Get starting values for threats model
       
@@ -319,7 +374,8 @@ server <- function(input,output,session){
       scale_fill_gradient(low='#e6ee9c', high='#f44336')  +
       theme_classic() +
       theme(legend.position="none",
-            aspect.ratio=1)
+            aspect.ratio=1)+
+      ggtitle(user_data()$species)
     
     
     gg
@@ -335,9 +391,46 @@ server <- function(input,output,session){
            })
       
   #=======================
-  # Plot table
- # output$tbl<-renderTable(pxt())
+  # Export table and plots
+      
+      # Downloadable csv of pxt dataset ----
+      output$pxt_tbl_download <- downloadHandler(
+        filename = function() {
+          paste("pxt_",user_data()$species, ".csv", sep = "")
+        },
+        content = function(file) {
+          write.csv(pxt(), file, row.names = FALSE)
+        }
+      )
     
+      # Downloadable pdf of extinction plot ----
+      output$pxt_plot_download <- downloadHandler(
+        filename = function() {
+          paste("pxt_",user_data()$species, ".pdf", sep = "")
+        },
+        content = function(file) {
+          pdf(file, width=7, height=5)  # Open a PDF device to write the plot
+          print(
+            gg_ext()
+          )
+          dev.off()
+        }
+      )  
+      
+      # Downloadable pdf of threats plot ----
+      output$threats_plot_download <- downloadHandler(
+        filename = function() {
+          paste("threats_",user_data()$species, ".pdf", sep = "")
+        },
+        content = function(file) {
+          pdf(file, width=5, height=5)  # Open a PDF device to write the plot
+          print(
+            gg_pe()
+          )
+          dev.off()
+        }
+      )
+      
   
 }
 

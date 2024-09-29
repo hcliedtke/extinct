@@ -6,6 +6,7 @@ library(readxl)
 library(tidyverse)
 library(plotly)
 library(reactable)
+library(DT)
 library(shinyalert)
 library(lubridate)
 

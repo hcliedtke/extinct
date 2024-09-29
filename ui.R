@@ -55,58 +55,72 @@ ui <- fluidPage(style='padding:100px;',
                 ),
                 
                 ## Extinction over time Output
+                ### Sliders and plot\
                 fluidRow(style='padding:30px;margin:10px;background-color:#f7f6f2;border-radius:10px',
-                         div(h3("Inferring Extinction based on Records and Surveys")),
-                         column(width=4,
-                                div(h4("Adjust Passive Survey Years"),
-                                    p("In years with no confirmed sightings or dedicated surveys there may still have been some probability 
+                         fluidRow(
+                           div(h3("Inferring Extinction based on Records and Surveys")),
+                           column(width=4,
+                                  div(h4("Passive Survey Years"),
+                                      p("In years with no confirmed sightings or dedicated surveys there may still have been some probability 
                                       that the taxon was spotted by an undocumented observer. How these 'passive survey years' influence the model 
                                       can be explored by adjusting the upper and lower limits for the three probability parameters (proportion 
                                       of total area surveyed, probability of reliable identification, probability of recordings - see help above 
                                       for more details).")
-                                    ),
-                                sliderInput(inputId="eps",
-                                            label="ε:",
-                                            min = 0, max = 1, step=0.01,
-                                            value = c(0.01, 0.05),
-                                            dragRange = T),
-                                p("The proportion of the taxon's habitat within its likely entire range that was surveyed"),
-                                sliderInput(inputId="pi",
-                                            label="p(i):",
-                                            min = 0, max = 1, step=0.01,
-                                            value = c(0.7, 0.95),
-                                            dragRange = T),
-                         p("The probability that the taxon, or recent evidence of it, could have been reliably identified in 
+                                  ),
+                                  sliderInput(inputId="eps",
+                                              label="ε:",
+                                              min = 0, max = 1, step=0.01,
+                                              value = c(0.01, 0.05),
+                                              dragRange = T),
+                                  p("The proportion of the taxon's habitat within its likely entire range that was surveyed"),
+                                  sliderInput(inputId="pi",
+                                              label="p'(i):",
+                                              min = 0, max = 1, step=0.01,
+                                              value = c(0.7, 0.95),
+                                              dragRange = T),
+                                  p("The probability that the taxon, or recent evidence of it, could have been reliably identified in 
                            the survey if it had been recorded."),
-                                sliderInput(inputId="pr",
-                                            label="p(r):",
-                                            min = 0, max = 1, step=0.01,
-                                            value = c(0.7, 0.95),
-                                            dragRange = T),
-                p("The probability that the taxon, or recent evidence of it, would have been recorded in the survey."),
-                
-                ### RESET BUTTON
-                
-                actionBttn("reset_ext_btn", "Reset Sliders",style="pill", color = "warning")
-                
-                ),
-                
-                
-                ### PLOTTING AREA
-                
-                         column(width=8,
-                                div(h4("Extant Probability Through Time")),
-                                plotlyOutput("ext_ply"),
-                                div(p( 
-                                  "This plot shows the probability that the focal species is extant at any given year. 
+                                  sliderInput(inputId="pr",
+                                              label="p'(r):",
+                                              min = 0, max = 1, step=0.01,
+                                              value = c(0.7, 0.95),
+                                              dragRange = T),
+                                  p("The probability that the taxon, or recent evidence of it, would have been recorded in the survey."),
+                                  
+                                  ### RESET BUTTON
+                                  
+                                  actionBttn("reset_ext_btn", "Reset Sliders",style="pill", color = "warning")
+                                  
+                           ),
+                           
+                           
+                           ### PLOTTING AREA
+                           column(width=8,
+                                  # Render plot
+                                  div(h4("Extant Probability Through Time")),
+                                  plotlyOutput("ext_ply"),
+                                  div(p( 
+                                    "This plot shows the probability that the focal species is extant at any given year. 
                                   The boundaries of the light shaded region are upper and lower bounds on P(Xt) derived from interval arithmetic. 
-                                  The boundaries of the dark shaded region are 5% and 95% intervals derived from a Monte Carlo projection of the associated density functions, assuming normality and independence."))),
+                                  The boundaries of the dark shaded region are 5% and 95% intervals derived from a Monte Carlo projection of the associated density functions, assuming normality and independence.")),
+                         )),
+                         
                 
-                
+                fluidRow(
+                  div(h4("Records and Dedicated Surveys Parameters"),
+                      p("Below are the input parameters for records (confirmed sighting) and surveys (unsucessful sightings) that were used to generate the plot above. The tables are editable and to allow manipulating how these parameter values influence the final plot.")),
+                  # Render the records table
+                  column(width=4,
+                         div(h4("Records")),
+                         DTOutput("records_tbl")),
+                  column(width=8,
+                         # Render the records table
+                         div(h4("Surveys")),
+                         DTOutput("surveys_tbl"))
+                  ),         
                 
               
 ),
-
 
 
 ## Inferring Extinction based on Threats
@@ -166,17 +180,22 @@ fluidRow(style='padding:30px;margin:10px;background-color:#f7f6f2;border-radius:
                 ## download
                 fluidRow(style='padding:30px;margin:10px;background-color:#f7f6f2;border-radius:10px',
                          div(h3("Export Results"),
-                             p("Work in progress. Downloading output data will be enabled soon ")),
+                             p("Downloading the resulting extant probability data and plot")),
                       # column(width=4,
                       #        div(h4("Check error log")),
                       #        textOutput("error")
                       # ),
-                      # column(width=4,
-                      #        downloadButton("tbl_download", "Download table", class="btn-info")
-                      # ),
-                      # column(width=4,
-                      #        downloadButton("plot_download", "Download plot", class="btn-info")
-                      # ),
+                       column(width=4,
+                              downloadButton("pxt_tbl_download", "Download extinction table", class="btn-info")
+                       ),
+                      column(width=4,
+                              downloadButton("pxt_plot_download", "Download extinction plot", class="btn-info")
+                       ),
+                      column(width=4,
+                             downloadButton("threats_plot_download", "Download threats plot", class="btn-info")
+                      )
+                      
+                      
                       # 
                 ),
                 
