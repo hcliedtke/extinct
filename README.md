@@ -1,5 +1,7 @@
 # Extinct
 
+flexdashboard
+
 ## The App
 
 This is a Shiny app for modeling probability of extinction based on survey and record data, and combines this with extinction probability estimates based on threats to the species, to inform on whether a species should be classified as Critically Endangered or Extinct for the IUCN Red List conservation status assessment. It is essentially a wrapper for the [IUCN Red List Extinction assessment tool](https://www.iucnredlist.org/resources/ex-probability).
@@ -26,12 +28,12 @@ Besides information on the species, this first sheet requires the extinction pro
 
 ## 2 and 3. Records and Surveys
 
-For the correct implementation of this app, I refer you to [Thompson et al. 2017](https://www.sciencedirect.com/science/article/pii/S0006320717300575#s0080). In brief, this application requires two input tables, represented on two different sheets of the input Excel. These summarize the sightings and absence of sightings for years where the target species was actively looked for. 
+For the correct implementation of this app, I refer you to [Thompson et al. 2017](https://www.sciencedirect.com/science/article/pii/S0006320717300575#s0080). In brief, this application requires two input tables, represented on two different sheets of the input Excel. These summarize the sightings and absence of sightings for years where the target species was actively looked for.
 
 1. Records data - a table with tree columns with at least the following headers: year, pci_lower, pci_upper
 2. Surveys data - a table with seven columns with at least the following headers: year, eps_lower, eps_upper, pi_lower, pi_upper, pr_lower, pr_upper
-  
-    
+
+
 The lower and upper bounds refer to:
 
 * eps: the proportion of the taxon's habitat within its likely entire range that was surveyed (0 to 1)

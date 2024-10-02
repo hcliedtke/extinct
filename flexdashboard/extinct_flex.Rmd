@@ -1,0 +1,197 @@
+---
+title: "Extinct"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: scroll
+runtime: shiny
+---
+
+
+```{r under_the_hood}
+## load libraries
+library(tidyverse)
+library(readxl)
+library(DT)
+library(crosstalk)
+library(htmltools)
+library(plotly)
+library(shiny)
+
+## load custom functions
+source("../functions/read_extinct_excel.R")
+source("../functions/px_mid.R")
+source("../functions/run_extinct.R")
+
+
+## potential work around for download button
+#downloadButtonRmd <- function (outputId, label = "Download", class = NULL, ...)  {
+#     tags$a(id = outputId, class = paste("btn btn-default shiny-download-link", 
+#        class), href = "", target = "_blank", download = NA, 
+#        icon("download"), label, ...)
+# }
+
+
+## reactive functions
+
+### load user data
+ user_data <- eventReactive(input$file1,{
+      read_extinct_excel(input$file1$datapath)
+    })
+ 
+ ### run pxt
+ pxt<-eventReactive(input$file1,{
+   run_extinct(surveys=user_data()$surveys,
+               records=user_data()$records,
+               eps=user_data()$passive_surveys$eps,
+               pi=user_data()$passive_surveys$pi,
+               pr=user_data()$passive_surveys$pr)
+    
+  })
+```
+
+
+```{r download_handlers}
+
+# Downloadable csv of pxt dataset ----
+ output$pxt_tbl_download <- downloadHandler(
+        filename = function() {
+          paste("pxt_",user_data()$species, ".csv", sep = "")
+        },
+        content = function(file) {
+          write.csv(pxt(), file, row.names = FALSE)
+        }
+      )
+ 
+
+# Downloadable pdf of extinction plot ----
+output$pxt_plot_download <- downloadHandler(
+        filename = function() {
+          paste("pxt_",user_data()$species, ".pdf", sep = "")
+        },
+        content = function(file) {
+          pdf(file, width=7, height=5)  # Open a PDF device to write the plot
+          print(
+            gg_ext()
+          )
+          dev.off()
+        }
+      )
+
+# Downloadable pdf of threats plot ----
+      output$threats_plot_download <- downloadHandler(
+        filename = function() {
+          paste("threats_",user_data()$species, ".pdf", sep = "")
+        },
+        content = function(file) {
+          pdf(file, width=5, height=5)  # Open a PDF device to write the plot
+          print(
+            gg_pe()
+          )
+          dev.off()
+        }
+      )
+```
+
+
+Sidebar {.sidebar}
+=====================================
+
+```{r}
+# shiny inputs defined here
+ fileInput("file1", "Choose extinction probability data file (.xlsx)",
+                    multiple = TRUE,
+                    accept = c(".xlsx"))
+
+# Links to downloads 
+downloadLink(outputId = "pxt_tbl_download", label = "Download extinction probabilities table") 
+
+downloadLink(outputId = "pxt_plot_download", label = "Download extinction probabilities plot") 
+
+downloadLink(outputId ="threats_plot_download", label = "Download threats plot") 
+
+
+```
+
+Inferring Extinction Based on Records and urveys
+=====================================  
+
+Row {}
+-------------------------------------   
+
+### User input
+```{r}
+downloadButton(outputId = "pxt_tbl_download", label = "Download extinction table")
+bscols(widths = c(4,8),
+  # records
+  renderDT({
+    datatable(user_data()$records,
+              caption = "Confirmed Records",
+              editable = TRUE,
+              filter = "none",
+              rownames= FALSE,
+              options = list(dom = 't',
+                             scrollX = TRUE,
+                             ordering=F))
+  }),
+  # surveys
+  renderDT({
+    datatable(user_data()$surveys,
+              caption = "Unsucessful Sightings", 
+              editable = TRUE,
+              filter = "none",
+              rownames= FALSE,
+              options = list(dom = 't',
+                             scrollX = TRUE,
+                             ordering=F))
+  })
+)
+
+
+```
+
+### Extinction Probability
+```{r}
+gg_ext<-reactive({
+    
+    # ensure pxt exits
+    req(pxt())
+    
+    # make static plot
+    
+    gg<-pxt() %>% 
+      mutate(Observation=case_when(
+        year %in% (user_data()$surveys %>% pull(year)) ~ "No Sighting",
+        year %in% (user_data()$records %>% pull(year)) ~ "Confirmed Sighting"
+      )) %>%
+      ggplot(aes(x=year, y=PXt)) +
+      geom_hline(aes(yintercept=0.5), linetype="dashed") +
+      geom_hline(aes(yintercept=0.0), color="red") +
+      geom_ribbon(aes(ymin=PXt.min, ymax=PXt.max), fill="grey70") +
+      geom_ribbon(aes(ymin=MC_lower, ymax=MC_upper), fill="grey50") +
+      geom_line() +
+      geom_point(aes(color=Observation)) +  
+      scale_color_manual(values = c("Confirmed Sighting"="deepskyblue3","No Sighting"="black"), na.value = NA)  +
+      scale_x_continuous(n.breaks=10) +
+      theme_classic() +
+      theme(legend.position="none") +
+      ggtitle(user_data()$species)
+  })
+  
+# render interactive plot
+
+renderPlotly({
+  ggplotly(gg_ext()) 
+})
+
+```
+
+Inferring Extinction Based on Threats
+=====================================     
+
+### Chart 2
+    
+```{r}
+
+
+```
