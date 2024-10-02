@@ -36,98 +36,48 @@ server <- function(input,output,session){
   
   user_data<-reactiveVal(NULL)
   
-  
+  # create a conditional rule to show/hide panels depending on data being uploaded 
+  output$fileUploaded <- reactive({
+    return(!is.null(input$data_input) | input$run_btn == 1)
+  })
+  outputOptions(output, "fileUploaded", suspendWhenHidden = FALSE)
   #=======================
   # Load demo data on button press
   
   
   observeEvent(input$run_btn,{
-    
-      demo_data<-list()
-      
-      # get species
-      
       demo_file <- "./t_rufolavatus/Tachybaptus rufolavatus.xlsx"
-      
-      
-      demo_data$species<-read_excel(demo_file, sheet = "Threats", range = "B5" , col_names = F) %>%
-        pull(`...1`)
-      
-      # get survey data
-    
-      demo_data$surveys<-read_excel(demo_file, sheet = "Surveys", range = anchored("A14", dim = c(1000, 10)),col_names = TRUE) %>%
-        as_tibble() %>%
-        drop_na()
-      
-      # get records data
-      
-      demo_data$records<-read_excel(demo_file, sheet = "Records", range = anchored("A9", dim = c(1000, 4),col_names = TRUE)) %>%
-        as_tibble() %>%
-        drop_na()
-      
-      # get passive survey data
-      
-      demo_data$passive_surveys<-read_excel(demo_file, sheet = "Surveys", range = "B11:J12" , col_names = TRUE) %>%
-        as_tibble() %>%
-        drop_na()
-      
-      # get threats data
-      
-      demo_data$threats<-read_excel(demo_file, sheet = "Threats", range = "A11:D13" , col_names = TRUE) %>%
-        as_tibble() 
-      
-      
-      # return list as output
+      demo_data<-read_extinct_excel(x=demo_file)
+      # return list as reactive "user_data()" output
       user_data(demo_data)
-      
-    
   })
  
   
   #=======================
   # Load user-specified input data
   
-  # Load the user-uploaded dataset
   observeEvent(input$data_input, {
-    
-    # prepare list
-    dat<-list()
-    
-    # get species
-    file <- input$data_input
-    ext <- tools::file_ext(file$datapath)
-    
-    req(file)
-    validate(need(ext == "xlsx", "Please upload an xlsx file"))
-    
-    dat$species<-read_excel(file$datapath, sheet = "Threats", range = "B5" , col_names = F) %>%
-      pull(`...1`)
-    
-    # get survey data
-    
-    dat$surveys<-read_excel(file$datapath, sheet = "Surveys", range = anchored("A14", dim = c(1000, 10)),col_names = TRUE) %>%
-      as_tibble() %>%
-      drop_na()
-    
-    # get records data
-    
-    dat$records<-read_excel(file$datapath, sheet = "Records", range = anchored("A9", dim = c(1000, 4),col_names = TRUE)) %>%
-      as_tibble() %>%
-      drop_na()
-    
-    # get passive survey data
-    
-    dat$passive_surveys<-read_excel(file$datapath, sheet = "Surveys", range = "B11:J12" , col_names = TRUE) %>%
-      as_tibble() %>%
-      drop_na()
-    
-    
-    # return list as output
-    user_data(dat)
-    
+    upload<-read_extinct_excel(x=input$data_input$datapath)
+    # return list as reactive "user_data()" output
+    user_data(upload)
   })
   
+  #=======================
+  # check integrity of user-specified input data
   
+  observeEvent(input$data_input, {
+    run_check<-check_files(file=input$data_input$datapath, user_data = user_data())
+    # if errors are found, show pop-up notifications
+    if(length(run_check)>1){
+      shinyalert(title="There were some issues loading your file",
+                 text=paste0(
+                   paste0(run_check, collapse="</br></br>"),
+                   "</br></br>This may cause the app to crash or unexpected behaviour",
+                   collapse="</br></br>"),
+                 html=T,
+                 type="error")
+    }
+  })
   
   #=======================
   # Get starting values for passive survey sliders
@@ -135,14 +85,10 @@ server <- function(input,output,session){
   observe({
     
     passive_surveys<-user_data()$passive_surveys
-    
     updateSliderInput(inputId = "eps",
                       value = c(passive_surveys$eps_lower, passive_surveys$eps_upper))
-    
-    
     updateSliderInput(inputId = "pi",
                       value = pi_init<-c(passive_surveys$pi_lower, passive_surveys$pi_upper))
-    
     updateSliderInput(inputId = "pr",
                       value = c(passive_surveys$pr_lower, passive_surveys$pr_upper))
     
@@ -155,18 +101,13 @@ server <- function(input,output,session){
   observeEvent(ignoreInit = TRUE, input$reset_ext_btn,{
     
     passive_surveys<-user_data()$passive_surveys
-    
     updateSliderInput(inputId = "eps",
                       value = c(passive_surveys$eps_lower, passive_surveys$eps_upper))
-    
-    
     updateSliderInput(inputId = "pi",
                       value = c(passive_surveys$pi_lower, passive_surveys$pi_upper))
-    
     updateSliderInput(inputId = "pr",
                       value = c(passive_surveys$pr_lower, passive_surveys$pr_upper))
-    
-    
+  
   })
   
   #=======================
@@ -274,8 +215,8 @@ server <- function(input,output,session){
   })
   
       output$ext_ply<-renderPlotly({
-        plotly::ggplotly(gg_ext()) 
-        #%>% layout(height = 500, width = 800)
+        ggplotly(gg_ext(),
+                 height=600)
       })
     
     
@@ -284,17 +225,12 @@ server <- function(input,output,session){
       # Get starting values for threats model
       
       observe({
-        
         threats<-user_data()$threats
-        
         updateSliderInput(inputId = "p_local",
                           value = c(threats$minimum[1], threats$maximum[1]))
-        
-        
         updateSliderInput(inputId = "p_spatial",
                           value = c(threats$minimum[2], threats$maximum[2]))
-        
-        
+ 
       })
       
       #=======================
@@ -303,15 +239,12 @@ server <- function(input,output,session){
       observeEvent(ignoreInit = TRUE, input$reset_threats_btn,{
         
         threats<-user_data()$threats
-        
         updateSliderInput(inputId = "p_local",
                           value = c(threats$minimum[1], threats$maximum[1]))
-        
-        
+
         updateSliderInput(inputId = "p_spatial",
                           value = c(threats$minimum[2], threats$maximum[2]))
-        
-        
+ 
       })
       
       

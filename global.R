@@ -39,59 +39,14 @@ run_colors <- c(
 source("functions/px_mid.R")
 
 # ============================================
+# load function that reads IUCN extinction template
+source("functions/read_extinct_excel.R")
+
+# ============================================
 # load run_extinct function to execute code on button-click
 source("functions/run_extinct.R")
 
-
 # ============================================
-# function to check whether input is correct and if not, provide informative error messages
-
-input_check<-function(file_index){
-  
-  file_index=file_index
-  ### make empty list
-  
-  input_check<-list()
-  
-  ### check if log file exists
-  input_check$logs=any(file_index$filetype=="log")
-  
-  ### check if schedule file exists
-  input_check$schedule=any(file_index$filetype=="schedule")
-  
-  ### check that only one tree file has been uploaded
-  input_check$trees=length(which(file_index$filetype=="tree"))==1
-  
-  ### check if all files in the log have been uploaded
-  
-  # read_header(file_path= file_index %>%
-  #               filter(filetype=="log") %>%
-  #                pull(filepath))
-  
-  
-  
-  ### check if run modes are different
-  
-  error_list<-list()
-  
-  if(!input_check$logs) error_list$logs <-  "No log files found. Are you sure you have uploaded at least one file with the extension .Log.txt?"
-  
-  if(!input_check$schedule) error_list$schedule <- "No schedule files found. Are you sure you have uploaded at least one file with the extension .Schedule.txt?"
-  
-  if(!input_check$trees) error_list$trees <- "No tree file found. Are you sure you have uploaded at least one file with the extension .trees, or .tre"
-  
-  
-  ## enframe
-  if(length(error_list)>0){
-    errors<-error_list %>% 
-      enframe()
-  } else {
-    errors<-data.frame(x="All files uploaded correctly")
-  }
-  
-  return(errors)
-  
-}
-
-
+# load file check function
+source("functions/check_files.R")
 

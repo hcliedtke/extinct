@@ -18,19 +18,18 @@ read_extinct_excel<-function(x){
   
   dat$surveys<-read_excel(file, sheet = "Surveys", range = anchored("A14", dim = c(1000, 10)),col_names = TRUE) %>%
     as_tibble() %>%
-    drop_na()
+    drop_na(year)
   
   # get records data
   
   dat$records<-read_excel(file, sheet = "Records", range = anchored("A9", dim = c(1000, 4),col_names = TRUE)) %>%
     as_tibble() %>%
-    drop_na()
+    drop_na(year)
   
   # get passive survey data
   
   dat$passive_surveys<-read_excel(file, sheet = "Surveys", range = "B11:J12" , col_names = TRUE) %>%
     as_tibble() %>%
-    drop_na() %>%
     pivot_longer(everything(), names_to = "parameter") %>%
     separate(parameter, sep="_", into=c("parameter","bound")) %>%
     group_by(parameter) %>%

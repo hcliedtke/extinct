@@ -53,7 +53,8 @@ ui <- fluidPage(style='padding:100px;',
                                 )
                           
                 ),
-                
+                conditionalPanel(
+                  condition = "output.fileUploaded == true",
                 ## Extinction over time Output
                 ### Sliders and plot\
                 fluidRow(style='padding:30px;margin:10px;background-color:#f7f6f2;border-radius:10px',
@@ -93,12 +94,12 @@ ui <- fluidPage(style='padding:100px;',
                                   
                            ),
                            
-                           
+                             
                            ### PLOTTING AREA
                            column(width=8,
                                   # Render plot
                                   div(h4("Extant Probability Through Time")),
-                                  plotlyOutput("ext_ply"),
+                                  plotlyOutput("ext_ply", height = "auto"),
                                   div(p( 
                                     "This plot shows the probability that the focal species is extant at any given year. 
                                   The boundaries of the light shaded region are upper and lower bounds on P(Xt) derived from interval arithmetic. 
@@ -177,7 +178,10 @@ fluidRow(style='padding:30px;margin:10px;background-color:#f7f6f2;border-radius:
                 
                 
                 
-                ## download
+                ## download panel
+
+
+  
                 fluidRow(style='padding:30px;margin:10px;background-color:#f7f6f2;border-radius:10px',
                          div(h3("Export Results"),
                              p("Downloading the resulting extant probability data and plots.")),
@@ -197,12 +201,13 @@ fluidRow(style='padding:30px;margin:10px;background-color:#f7f6f2;border-radius:
                       
                       
                       # 
-                ),
+                )
+),
                 
               ## footer
                 fluidRow(
                   div(
-                    p(style="text-align:center",
+                    p(style="text-align:left",
                       "Copyright (c) 2024 H. Christoph Liedtke. All rights reserved.This work is licensed under the terms of the ",tags$a(
                         "MIT license",
                         target = "_blank",

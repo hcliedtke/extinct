@@ -4,6 +4,9 @@ output:
   flexdashboard::flex_dashboard:
     orientation: columns
     vertical_layout: scroll
+    theme: 
+      version: 4
+      bootswatch: litera
 runtime: shiny
 ---
 
@@ -48,6 +51,11 @@ source("../functions/run_extinct.R")
                pr=user_data()$passive_surveys$pr)
     
   })
+ 
+ 
+ ## make shared dataobject
+
+user_data_shared<-eventReactive(user_data(),SharedData$new(user_data()))
 ```
 
 
@@ -126,28 +134,35 @@ bscols(widths = c(4,8),
   # records
   renderDT({
     datatable(user_data()$records,
+              fillContainer = T,
               caption = "Confirmed Records",
               editable = TRUE,
               filter = "none",
               rownames= FALSE,
               options = list(dom = 't',
                              scrollX = TRUE,
+                             scrollY = '300px',
                              ordering=F))
   }),
   # surveys
   renderDT({
     datatable(user_data()$surveys,
+              fillContainer = T,
               caption = "Unsucessful Sightings", 
               editable = TRUE,
               filter = "none",
-              rownames= FALSE,
+              rownames = FALSE,
               options = list(dom = 't',
                              scrollX = TRUE,
+                             scrollY = '300px',
                              ordering=F))
   })
 )
 
 
+
+
+  
 ```
 
 ### Extinction Probability
