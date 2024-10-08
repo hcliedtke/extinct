@@ -1,32 +1,37 @@
 # Extinct
 
-flexdashboard
+## The R Package
+  
+_work in progress:_ The shiny app (detailed below) essentially rides on a handful of helper functions that allow reading the IUCN Red List conservation status assessment template excel file and calculate extinction probabilities. To give users maximum flexibility, this repository will be wrapped into an R package to allow incorporating functions into scripts.
+
 
 ## The App
 
-This is a Shiny app for modeling probability of extinction based on survey and record data, and combines this with extinction probability estimates based on threats to the species, to inform on whether a species should be classified as Critically Endangered or Extinct for the IUCN Red List conservation status assessment. It is essentially a wrapper for the [IUCN Red List Extinction assessment tool](https://www.iucnredlist.org/resources/ex-probability).
+This is a Shiny app for a) modeling probability of extinction based on survey and record data, and b) to inform on whether a species should be classified as Critically Endangered or Extinct for the IUCN Red List conservation status assessment, using both the extinction probability form surveys and records, and an assessment of threats to species and their habitat. It is essentially a wrapper for the [IUCN Red List Extinction assessment tool](https://www.iucnredlist.org/resources/ex-probability).
 
 Launch the app here: https://hcliedtke.shinyapps.io/extinct/
 
 ## Background
 
-[Keith et al. 2017](https://doi.org/10.1016/j.biocon.2017.07.026) Discuss how to use an argument map to try and derive at probability estimates for threats that are impacting the extinction risk of species both at a local and spatial (distribution-wide) scale.
+[IUCN Red List Extinction assessment tool](https://www.iucnredlist.org/resources/ex-probability) is based on on three publications.   
 
-[Thompson et al. 2017](https://www.sciencedirect.com/science/article/pii/S0006320717300575#s0080) published a method for estimating detection probabilities of a target species from survey data. It takes into account successful sightings (records) as well as search efforts that did not result in sightings (surveys), as well as the probabilities of surveys having been adequately conducted. The authors provide R code to execute their model and this Shiny app implements this code to produce a platform for estimating your own detection probabilities and for interactively adjusting survey adequacy probabilities to see how this affects detection probabilities.
+[Keith et al. 2017](https://doi.org/10.1016/j.biocon.2017.07.026) Describe an argument map to derive at probability estimates for threats that are impacting the extinction risk of species both at a local and spatial (distribution-wide) scale.
 
-[Akçakaya et al. 2017](https://doi.org/10.1016/j.biocon.2017.07.027) Then combine these two extinction probabilities to help determine if a species should be classified as Critically Endangered or Extinct, in line with the IUCN Red List species conservation status assessments.
+[Thompson et al. 2017](https://www.sciencedirect.com/science/article/pii/S0006320717300575#s0080) published a method for estimating detection probabilities of a target species from survey data. It takes into account successful sightings (records), search efforts that did not result in sightings (surveys), and estimates for opportunistic sightings outside of official records (passive surveys).
+
+[Akçakaya et al. 2017](https://doi.org/10.1016/j.biocon.2017.07.027) combine the two extinction probabilities defined by Keith et al. and Thompson et al. to help determine if a species should be classified as Critically Endangered or Extinct, in line with the IUCN Red List species conservation status assessments.
 
 
 ## Data input
 
-To run the app, only a single excel file is required. This follows the template of the IUCN Red List Extinction Probability data template, which can be downloaded from [here](https://www.iucnredlist.org/resources/ex-probability). The template along with its documentation goes into great detail on how to fill it out. The excel file has three important sheets.
+To run the app, only a single excel file is required. This is the IUCN Red List Extinction Probability data template, which can be downloaded from [here](https://www.iucnredlist.org/resources/ex-probability). The template along with its documentation goes into great detail on how to fill it out. The excel file has three important sheets.
 
 ## 1. Threats
 
 Besides information on the species, this first sheet requires the extinction probabilities at the local and spatial scale to be entered, based on the methods of [Keith et al. 17](https://doi.org/10.1016/j.biocon.2017.07.026).
 
 
-## 2 and 3. Records and Surveys
+## 2. and 3. Records and Surveys
 
 For the correct implementation of this app, I refer you to [Thompson et al. 2017](https://www.sciencedirect.com/science/article/pii/S0006320717300575#s0080). In brief, this application requires two input tables, represented on two different sheets of the input Excel. These summarize the sightings and absence of sightings for years where the target species was actively looked for.
 
@@ -90,4 +95,4 @@ Butchart, S. H. M., Lowe,  S., Martin, R. W., Symes, A., Westrip, J. R. S., Whea
 
 Please cite their publication when using their models, including via this Shiny app. If this shiny app was useful to you, please cite this GitHub repository as well:
 
-Liedtke, H. C. (2024). Extinct: A shiny app for inferring extinction v1.0.0
+Liedtke, H. C. (2024). Extinct: A shiny app for inferring extinction. v1.0.0. https://github.com/hcliedtke/extinct 

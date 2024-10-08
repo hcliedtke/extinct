@@ -1,18 +1,31 @@
 read_extinct_excel<-function(x){
   # where x is the input$file uploaded by the user
   
-  # prepare list
-  dat<-list()
-  
-  # get species
+
+  # get file path and extension
   file <- x
   ext <- tools::file_ext(x)
   
   req(file)
   validate(need(ext == "xlsx", "Please upload an xlsx file"))
+
+  # prepare empty listlist
+  dat<-list()
   
+  # get species name
+    
   dat$species<-read_excel(file, sheet = "Threats", range = "B5" , col_names = F) %>%
     pull(`...1`)
+  
+  # get threats probabilities
+  
+  dat$threats<-read_excel(file, sheet = "Threats", range = "B11:D13" , col_names = TRUE) %>%
+    as_tibble() %>%
+    mutate(parameter=c("p_local","p_spatial")) %>%
+    pivot_longer(-parameter, names_to="bound") %>%
+    group_by(parameter) %>%
+    summarise(named_vec = list(value)) %>%
+    deframe()
   
   # get survey data
   

@@ -5,7 +5,11 @@ account: hcliedtke
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 11225719
+<<<<<<< Updated upstream
 bundleId: 9174040
+=======
+bundleId: 8467449
+>>>>>>> Stashed changes
 url: https://hcliedtke.shinyapps.io/extinct/
 version: 1
 asMultiple: FALSE

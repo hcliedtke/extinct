@@ -3,34 +3,6 @@ server <- function(input,output,session){
   # global server settings
   options(shiny.maxRequestSize=30*1024^2) 
   
-  
-  #=======================
-  # help button
-  observeEvent(input$help_btn, {
-    # Show a simple modal
-    shinyalert(title="Loading Data", type="info",
-    text = "To get started, download the Extinction probability data template from the IUCN Red List website (see link in app). Fill this in for your species of interest. This provide information on the years with sightings of the targe species (records) and years in which surveys were conducted, but no animals were sighted (i.e. unsuccessful surveys). These two tables contain upper and lower probability limits for each. The format of the tables is as follows:
-    
-    1. Record data - a table with tree columns with the following headers: year, pci_lower, pci_upper
-    2. Survey data - a table with seven columns with the following headers: year, eps_lower, eps_upper, pi_lxower, pi_upper, pr_lower, pr_upper
-    
-    
-    The lower and upper bounds refer to:
-    
-    eps: the proportion of the taxon's habitat within its likely entire range that was surveyed (0 to 1)
-    pi: the probability that the taxon, or recent evidence of it, could have been reliably identified in the survey if it had been recorded (0 to 1)
-    pr: the probability that the taxon, or recent evidence of it, would have been recorded in the survey (0 to 1)
-    pci: the probability that the taxon is correctly identified as extant (0 to 1)
-    
-    IMPORTANT!! The first year MUST be a record year. i.e. there cannot be unsuccessful surveys prior to the first record.
-    
-    Check out the demo files availaible form the github reporostory or the original Thompson et al. 2013 publication for help.
-    
-    For any problems, raise an issue in the github repository (link at bottom of page)"
-    
-    )
-  })
-  
   #=======================
   # Create reactive value that will either take input data or demo data
   
@@ -41,9 +13,9 @@ server <- function(input,output,session){
     return(!is.null(input$data_input) | input$run_btn == 1)
   })
   outputOptions(output, "fileUploaded", suspendWhenHidden = FALSE)
+  
   #=======================
   # Load demo data on button press
-  
   
   observeEvent(input$run_btn,{
       demo_file <- "./t_rufolavatus/Tachybaptus rufolavatus.xlsx"
@@ -55,7 +27,7 @@ server <- function(input,output,session){
   
   #=======================
   # Load user-specified input data
-  
+
   observeEvent(input$data_input, {
     upload<-read_extinct_excel(x=input$data_input$datapath)
     # return list as reactive "user_data()" output
@@ -65,7 +37,7 @@ server <- function(input,output,session){
   #=======================
   # check integrity of user-specified input data
   
-  observeEvent(input$data_input, {
+  observeEvent(input$data_input,{
     run_check<-check_files(file=input$data_input$datapath, user_data = user_data())
     # if errors are found, show pop-up notifications
     if(length(run_check)>1){
@@ -84,13 +56,16 @@ server <- function(input,output,session){
   
   observe({
     
+    # load passive survey data
     passive_surveys<-user_data()$passive_surveys
+    
+    #set sliders
     updateSliderInput(inputId = "eps",
-                      value = c(passive_surveys$eps_lower, passive_surveys$eps_upper))
+                      value = c(passive_surveys$eps[1], passive_surveys$eps[3]))
     updateSliderInput(inputId = "pi",
-                      value = pi_init<-c(passive_surveys$pi_lower, passive_surveys$pi_upper))
+                      value = c(passive_surveys$pi[1], passive_surveys$pi[3]))
     updateSliderInput(inputId = "pr",
-                      value = c(passive_surveys$pr_lower, passive_surveys$pr_upper))
+                      value = c(passive_surveys$pr[1], passive_surveys$pr[3]))
     
     
   })
@@ -98,15 +73,17 @@ server <- function(input,output,session){
   #=======================
   # Reset sliders on button press
   
-  observeEvent(ignoreInit = TRUE, input$reset_ext_btn,{
+  observeEvent(input$reset_ext_btn,{
     
+    # load passive survey data
     passive_surveys<-user_data()$passive_surveys
+    
     updateSliderInput(inputId = "eps",
-                      value = c(passive_surveys$eps_lower, passive_surveys$eps_upper))
+                      value = c(passive_surveys$eps[1], passive_surveys$eps[3]))
     updateSliderInput(inputId = "pi",
-                      value = c(passive_surveys$pi_lower, passive_surveys$pi_upper))
+                      value = c(passive_surveys$pi[1], passive_surveys$pi[3]))
     updateSliderInput(inputId = "pr",
-                      value = c(passive_surveys$pr_lower, passive_surveys$pr_upper))
+                      value = c(passive_surveys$pr[1], passive_surveys$pr[3]))  
   
   })
   
@@ -220,30 +197,35 @@ server <- function(input,output,session){
       })
     
     
-      
       #=======================
       # Get starting values for threats model
-      
+  
       observe({
+        
+        # load threats data
         threats<-user_data()$threats
+        
+        #set sliders
         updateSliderInput(inputId = "p_local",
-                          value = c(threats$minimum[1], threats$maximum[1]))
+                          value = c(threats$p_local[1], threats$p_local[3]))
         updateSliderInput(inputId = "p_spatial",
-                          value = c(threats$minimum[2], threats$maximum[2]))
+                          value = c(threats$p_spatial[1], threats$p_spatial[3]))
  
       })
       
       #=======================
       # Reset sliders on button press
       
-      observeEvent(ignoreInit = TRUE, input$reset_threats_btn,{
+      observeEvent(input$reset_threats_btn,{
         
+        # load threats data
         threats<-user_data()$threats
+        
+        #reset sliders
         updateSliderInput(inputId = "p_local",
-                          value = c(threats$minimum[1], threats$maximum[1]))
-
+                          value = c(threats$p_local[1], threats$p_local[3]))
         updateSliderInput(inputId = "p_spatial",
-                          value = c(threats$minimum[2], threats$maximum[2]))
+                          value = c(threats$p_spatial[1], threats$p_spatial[3]))
  
       })
       
