@@ -9,11 +9,14 @@ run_extinct<-function(records, surveys, eps, pi, pr){
   passive_surveys<- tibble(
      year = min(records$year, surveys$year):lubridate::year(Sys.Date()),
      eps_lower=eps[1],
-     eps_upper=eps[2],
+     eps_best=eps[2],
+     eps_upper=eps[3],
      pi_lower=pi[1],
-     pi_upper=pi[2],
+     pi_best=pi[2],
+     pi_upper=pi[3],
      pr_lower=pr[1],
-     pr_upper=pr[2]
+     pr_best=pr[2],
+     pr_upper=pr[3],
   )
   # remove survey and record years, and add real data from active surveys
   
@@ -39,6 +42,9 @@ run_extinct<-function(records, surveys, eps, pi, pr){
     as_tibble() %>%
     rename(MC_lower=V1,
            MC_upper=V3) %>%
+    # limit upper and lower MC to 0-1
+    mutate(MC_lower=ifelse(MC_lower<0, 0, MC_lower),
+           MC_upper=ifelse(MC_upper>1, 1, MC_upper)) %>%
     mutate(year=record_years$year) %>%
     select(year, everything())
   

@@ -62,11 +62,46 @@ server <- function(input,output,session){
     #set sliders
     updateSliderInput(inputId = "eps",
                       value = c(passive_surveys$eps[1], passive_surveys$eps[3]))
+    
+    updateSliderInput(session, "eps_best", 
+                      min = passive_surveys$eps[1], 
+                      max = passive_surveys$eps[3],
+                      value = passive_surveys$eps[2])
+
     updateSliderInput(inputId = "pi",
                       value = c(passive_surveys$pi[1], passive_surveys$pi[3]))
+    
+    updateSliderInput(session, "pi_best", 
+                      min = passive_surveys$pi[1], 
+                      max = passive_surveys$pi[3],
+                      value = passive_surveys$pi[2])
+    
     updateSliderInput(inputId = "pr",
                       value = c(passive_surveys$pr[1], passive_surveys$pr[3]))
     
+    updateSliderInput(session, "pr_best", 
+                      min = passive_surveys$pr[1], 
+                      max = passive_surveys$pr[3],
+                      value = passive_surveys$pr[2])
+  })
+  
+  #=======================
+  # Adjust best value slider ranges
+  
+  observe({
+    
+    # adjust slider range
+    updateSliderInput(session, "eps_best", 
+                      min = input$eps[1], 
+                      max = input$eps[2])
+    
+    updateSliderInput(session, "pi_best", 
+                      min = input$pi[1], 
+                      max = input$pi[2])
+    
+    updateSliderInput(session, "pr_best", 
+                      min = input$pr[1], 
+                      max = input$pr[2])
     
   })
   
@@ -80,10 +115,27 @@ server <- function(input,output,session){
     
     updateSliderInput(inputId = "eps",
                       value = c(passive_surveys$eps[1], passive_surveys$eps[3]))
+    
+    updateSliderInput(session, "eps_best", 
+                      min = passive_surveys$eps[1], 
+                      max = passive_surveys$eps[3],
+                      value = passive_surveys$eps[2])
+    
     updateSliderInput(inputId = "pi",
-                      value = c(passive_surveys$pi[1], passive_surveys$pi[3]))
+                      value = c(passive_surveys$pi[1], passive_surveys$pi[3]))    
+    
+    updateSliderInput(session, "pi_best", 
+                      min = passive_surveys$pi[1], 
+                      max = passive_surveys$pi[3],
+                      value = passive_surveys$pi[2])
+    
     updateSliderInput(inputId = "pr",
-                      value = c(passive_surveys$pr[1], passive_surveys$pr[3]))  
+                      value = c(passive_surveys$pr[1], passive_surveys$pr[3]))
+    
+    updateSliderInput(session, "pr_best", 
+                      min = passive_surveys$pr[1], 
+                      max = passive_surveys$pr[3],
+                      value = passive_surveys$pr[2])
   
   })
   
@@ -97,9 +149,9 @@ server <- function(input,output,session){
     req(user_data())
     
     # update passive survey input from sliders
-    eps<-input$eps
-    pi<-input$pi
-    pr<-input$pr
+    eps<-c(input$eps[1], input$eps_best[1], input$eps[2])
+    pi<-c(input$pi[1], input$pi_best[1], input$pi[2])
+    pr<-c(input$pr[1], input$pr_best[1], input$pr[2])
     
     
     # run extinction calculations
@@ -173,7 +225,8 @@ server <- function(input,output,session){
     gg<-pxt() %>% 
       mutate(Observation=case_when(
         year %in% (user_data()$surveys %>% pull(year)) ~ "No Sighting",
-        year %in% (user_data()$records %>% pull(year)) ~ "Confirmed Sighting"
+        year %in% (user_data()$records %>% pull(year)) ~ "Confirmed Sighting",
+        TRUE ~ "No Survey or Record"
       )) %>%
       ggplot(aes(x=year, y=PXt)) +
       geom_hline(aes(yintercept=0.5), linetype="dashed") +
@@ -181,8 +234,15 @@ server <- function(input,output,session){
       geom_ribbon(aes(ymin=PXt.min, ymax=PXt.max), fill="grey70") +
       geom_ribbon(aes(ymin=MC_lower, ymax=MC_upper), fill="grey50") +
       geom_line() +
-      geom_point(aes(color=Observation)) +  
-      scale_color_manual(values = c("Confirmed Sighting"="deepskyblue3","No Sighting"="black"), na.value = NA)  +
+      geom_point(aes(color=Observation,
+                     text=paste0(
+                       "</br><em>", Observation, "</em>",
+                       "</br>Year: ", year,
+                       "</br>PXt: ", round(PXt, 2),
+                       "</br>PXt min/max: ", round(PXt.min, 2), "-" ,round(PXt.max,2),
+                       "</br>PXt MC lower/upper: ", round(MC_lower, 2), "-" ,round(MC_upper,2))
+                     )) +  
+      scale_color_manual(values = c("Confirmed Sighting"="deepskyblue3","No Sighting"="black","No Survey or Record"=NA), na.value = NA)  +
       scale_x_continuous(n.breaks=10) +
       theme_classic() +
       theme(legend.position="none") +
@@ -193,12 +253,13 @@ server <- function(input,output,session){
   
       output$ext_ply<-renderPlotly({
         ggplotly(gg_ext(),
+                 tooltip = "text",
                  height=600)
       })
     
     
       #=======================
-      # Get starting values for threats model
+      # Get starting values for threats model from sliders
   
       observe({
         
@@ -208,9 +269,37 @@ server <- function(input,output,session){
         #set sliders
         updateSliderInput(inputId = "p_local",
                           value = c(threats$p_local[1], threats$p_local[3]))
+        
+        updateSliderInput(session, "p_local_best", 
+                          min = threats$p_local[1], 
+                          max = threats$p_local[3],
+                          value = threats$p_local[2])
+        
         updateSliderInput(inputId = "p_spatial",
                           value = c(threats$p_spatial[1], threats$p_spatial[3]))
+        
+        updateSliderInput(session, "p_spatial_best", 
+                          min = threats$p_spatial[1], 
+                          max = threats$p_spatial[3],
+                          value = threats$p_spatial[2])
+        
  
+      })
+      
+      #=======================
+      # Adjust best value slider range
+      
+      observe({
+        
+      # adjust slider range
+        updateSliderInput(session, "p_local_best", 
+                          min = input$p_local[1], 
+                          max = input$p_local[2])
+        
+        updateSliderInput(session, "p_spatial_best", 
+                          min = input$p_spatial[1], 
+                          max = input$p_spatial[2])
+        
       })
       
       #=======================
@@ -224,8 +313,19 @@ server <- function(input,output,session){
         #reset sliders
         updateSliderInput(inputId = "p_local",
                           value = c(threats$p_local[1], threats$p_local[3]))
+        
+        updateSliderInput(inputId = "p_local_best",
+                          min=threats$p_local[1],
+                          max=threats$p_local[3],
+                          value = c(threats$p_local[2]))
+      
         updateSliderInput(inputId = "p_spatial",
                           value = c(threats$p_spatial[1], threats$p_spatial[3]))
+        
+        updateSliderInput(inputId = "p_spatial_best",
+                          min=threats$spatial[1],
+                          max=threats$spatial[3],
+                          value = c(threats$spatial[2]))
  
       })
       
@@ -252,7 +352,7 @@ server <- function(input,output,session){
       # update threats data  from sliders
       threats_dat$minimum<-c(input$p_local[1],input$p_spatial[1])
       threats_dat$maximum<-c(input$p_local[2],input$p_spatial[2])
-      threats_dat$best<-(threats_dat$minimum+threats_dat$maximum)/2 # currently takes the mean.. not ideal
+      threats_dat$best<-c(input$p_local_best[1],input$p_spatial_best[1])
       
 
     # make plotting data  
@@ -275,14 +375,17 @@ server <- function(input,output,session){
     gg<-plot_dat %>%
       ggplot(aes(x=x,y=y)) +
       geom_tile(data=grid_fill, aes(x, y, fill=x+y), alpha = 0.75) +
-      geom_rect(aes(xmin = 0.9, xmax = 1, ymin = 0.9, ymax = 1),color="red",fill = NA) +
-      geom_rect(aes(xmin = 0.5, xmax = 1, ymin = 0.5, ymax = 1),color="red",fill = NA) +
-      geom_text(aes(x=1, y=0.5, label = "Critically Endangered"), hjust = 1.1, vjust=-1,
-                color="red") +
-      geom_text(aes(x=1, y=0.9, label = "Ex"), hjust = 1.2, vjust=-1,
-                color="red") +
+      geom_rect(aes(xmin = 0.9, xmax = 1, ymin = 0.9, ymax = 1),color="#B30000",fill = NA) +
+      geom_rect(aes(xmin = 0.5, xmax = 1, ymin = 0.5, ymax = 1),color="#B30000",fill = NA) +
+      geom_text(aes(x=0.75, y=0.45), label = "Critically Endangered (Possibly Extinct)",
+                color="#B30000") +
+      geom_text(aes(x=0.95, y=0.85), label = "Extinct",
+                color="#B30000") +
       geom_abline(aes(intercept=0, slope=1), linetype=2) +
-      geom_point(size=3) + 
+      geom_point(size=3, aes(text=paste0("</br>P(E) surveys and records: ", round(x, 2), " (upper: ", round(xmax,2), ", lower: ", round(xmin,2),")",
+                                        "</br>P(E) threats: ", round(y,2), " (upper: ", round(ymax,2), ", lower: ", round(ymin,2),")",
+                                        "</br>Average P(E): ", round(mean(x,y), 2)))
+                 ) + 
       geom_errorbar(aes(ymin = ymin,ymax = ymax),width = 0.01) + 
       geom_errorbarh(aes(xmin = xmin,xmax = xmax),height = 0.01) +
       labs(y="P(E) from Threats Model", x="P(E) from Records and Survey Model") +
@@ -295,16 +398,23 @@ server <- function(input,output,session){
     
     gg
   })
-   ## # plotly output
-   ##   output$pe_ply<-renderPlotly({
-   ##     plotly::ggplotly(gg_pe())
-   ##   })
   
-  # plot output
-      output$pe_gg<-renderPlot({
-             gg_pe()
-           })
+  ## plot output
+  #    output$pe_gg<-renderPlot({
+  #           gg_pe()
+  #         })
       
+  # plotlyfy    
+      # plotly output
+        output$pe_ply<-renderPlotly({
+          plotly::ggplotly(gg_pe(),
+                           tooltip = "text",
+                           height=600) %>%
+            style(hoverinfo = "none", traces = c(1:5)) # hide trace info on hover
+        })
+      
+      
+          
   #=======================
   # Export table and plots
       

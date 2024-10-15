@@ -9,6 +9,7 @@ library(reactable)
 library(DT)
 library(shinyalert)
 library(lubridate)
+library(crosstalk)
 
 # ============================================
 # Set themes  

@@ -31,9 +31,9 @@ px.mid = function(records=records, surveys = all_surveys, all_years=record_years
   
   # first year t=1
   rec = records[records[,1]==years[1],]
-  pci.mid = (rec[,2] + rec[,3]) / 2
-  pci.min=rec[,2]
-  pci.max=rec[,3]
+  pci.mid =rec[,"pci_best"]
+  pci.min=rec[,"pci_lower"]
+  pci.max=rec[,"pci_upper"]
   
   PXt[1]=pxt.recording(pci.mid, PX0)
   PXt.min[1]=pxt.recording(pci.min, PX0)
@@ -42,8 +42,8 @@ px.mid = function(records=records, surveys = all_surveys, all_years=record_years
   
   n=10000 #number of samples
   pxt.sam=rep(PX0,n)
-  stdev=(rec[,3] - rec[,2])/4
-  pci.sam = rnorm(n,pci.mid,stdev )
+  stdev=(rec[,"pci_upper"] - rec[,"pci_lower"])/4
+  pci.sam = rnorm(n,pci.mid,stdev)
   pxt.sam = pxt.recording(pci.sam, pxt.sam)
   
   sd[1]=sd(pxt.sam)
@@ -58,10 +58,9 @@ px.mid = function(records=records, surveys = all_surveys, all_years=record_years
       rec = records[records[,1]==years[t],]
       
       #get mid point estimate
-      pci.mid = (rec[,2] + rec[,3]) / 2
-      
-      pci.min=rec[,2]
-      pci.max=rec[,3]
+      pci.mid=rec[,"pci_best"]
+      pci.min=rec[,"pci_lower"]
+      pci.max=rec[,"pci_upper"]
       
       
       
@@ -71,8 +70,8 @@ px.mid = function(records=records, surveys = all_surveys, all_years=record_years
       PXt.max[t]=pxt.recording(pci.max, PXt.max[t-1])
       
       #sample to get min and max bounds
-      stdev=(rec[,3] - rec[,2])/4
-      pci.sam = rnorm(n,pci.mid,stdev )
+      stdev=(rec[,"pci_upper"] - rec[,"pci_lower"])/4
+      pci.sam = rnorm(n,pci.mid,stdev)
       pxt.sam = pxt.recording(pci.sam, pxt.sam)
       sd[t]=sd(pxt.sam)
       
@@ -82,18 +81,18 @@ px.mid = function(records=records, surveys = all_surveys, all_years=record_years
     }  else #if survey
     {
       sur=surveys[surveys[,1]==years[t],]
-      eps.mid = (sur[,2] + sur[,3]) / 2
-      pi.mid = (sur[,4] + sur[,5]) / 2
-      pr.mid = (sur[,6] + sur[,7]) / 2
+      eps.mid = sur[,"eps_best"]
+      pi.mid = sur[,"pi_best"]
+      pr.mid = sur[,"pr_best"]
       
       
-      eps.min = sur[,2]
-      pi.min = sur[,4]
-      pr.min = sur[,6]
+      eps.min = sur[,"eps_lower"]
+      pi.min = sur[,"pi_lower"]
+      pr.min = sur[,"pr_lower"]
       
-      eps.max = sur[,3]
-      pi.max = sur[,5]
-      pr.max = sur[,7]
+      eps.max = sur[,"eps_upper"]
+      pi.max = sur[,"pi_upper"]
+      pr.max = sur[,"pr_upper"]
       
       
       PXt[t]=pxt.survey(eps.mid, pi.mid, pr.mid, PXt[t-1])
@@ -101,9 +100,9 @@ px.mid = function(records=records, surveys = all_surveys, all_years=record_years
       PXt.max[t] = pxt.survey(eps.min, pi.min, pr.min, PXt.max[t - 1])
       
       
-      eps.sam = rnorm(n,eps.mid,(sur[,3] - sur[,2]) / 4)
-      pi.sam = rnorm(n,pi.mid,(sur[,5] - sur[,4]) / 4)
-      pr.sam = rnorm(n,pi.mid,(sur[,7] - sur[,6]) / 4)
+      eps.sam = rnorm(n,eps.mid,(eps.max - eps.min) / 4)
+      pi.sam = rnorm(n,pi.mid,(sur[,"pi_upper"] - sur[,"pi_lower"]) / 4)
+      pr.sam = rnorm(n,pr.mid,(sur[,"pr_upper"] - sur[,"pr_lower"]) / 4)
       pxt.sam = pxt.survey(eps.sam, pi.sam, pr.sam, pxt.sam)
       sd[t]=sd(pxt.sam)
     }
